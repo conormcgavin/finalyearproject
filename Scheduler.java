@@ -179,6 +179,10 @@ public class Scheduler {
 	
 	public void clearPrefs() {
 		this.preferences.clear();
+		 for (int i=0; i<num_workers; i++) {
+			this.preferences.add(new ArrayList<BoolVar>());
+	
+		 }
 	}
 	
 	public void optimise() {

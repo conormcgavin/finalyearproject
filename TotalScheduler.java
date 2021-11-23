@@ -25,7 +25,7 @@ public class TotalScheduler extends Scheduler {
 	public void optimise() {
 		super.optimise();
 		for(int i=0; i<this.num_workers; i++) {
-			this.model.times(this.totalPreferences[i], this.credit[i], this.scores[i]); // apply credit 
+			this.model.times(this.totalPreferences[i], this.credit[i], this.scores[i]).post(); // apply credit 
 		}
 		this.model.sum(this.totalPreferences, "=", this.overallTotalPreferences).post(); // store total preferences over all employees
 		this.model.sum(this.scores, "=", this.overallScore).post(); // store total score (what we are trying to maximize)
@@ -66,6 +66,22 @@ public class TotalScheduler extends Scheduler {
 		this.clearPrefs();
 		for (int i=0; i<preferences.length; i++) {
 			this.addPref(preferences[i][0], preferences[i][1], preferences[i][2], preferences[i][3]);
+		}
+		this.optimise();
+		this.solve();
+		this.printSolution();
+		this.credit = this.analyseScoresAndApplyCredit();
+		this.printScores();
+		return credit;
+	}
+	
+	public int[] runThrough(int[][] preferences, int[][]hardPreferences) {
+		this.clearPrefs();
+		for (int i=0; i<preferences.length; i++) {
+			this.addPref(preferences[i][0], preferences[i][1], preferences[i][2], preferences[i][3]);
+		}
+		for (int i=0; i<hardPreferences.length; i++) {
+			this.addPrefAsHard(hardPreferences[i][0], hardPreferences[i][1], hardPreferences[i][2], hardPreferences[i][3]);
 		}
 		this.optimise();
 		this.solve();
